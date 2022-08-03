@@ -5,8 +5,12 @@ import mysql from 'mysql';
 import util from 'util';
 import path from 'path';
 
-// Type interface imports
+// Named imports
 import { ValidRes } from './validation';
+import { Logger } from 'tslog';
+
+// Initializing tslog logger
+const log: Logger = new Logger({ name: "errorLog" });
 
 // Setting port
 const PORT = process.env.PORT;
@@ -21,14 +25,15 @@ const con = mysql.createConnection({
 
 // ONLY CONNECT ONCE HERE, DO NOT DO AGAIN IN ANY FUNCTION
 con.connect(err => {
+    // Don't need to log this, because if it doesn't connect we don't want the server to continue running.
     if(err) throw err;
 });
 
 // Use express and auto-parse JSON
 const app = express();
-app.use(express.json())
+app.use(express.json());
 
-// Allow query to be called asynchronously for password validation.
+// Allow query to be called asynchronously
 const query = util.promisify(con.query).bind(con);
 
 /**
@@ -43,9 +48,8 @@ const validate = async (key: string, user_name: string) => {
         const status: ValidRes[] = await query(`SELECT * FROM apikeys WHERE user_id = '${user_name}'`);
         // check hashes
         valid = (status[0].hash === md5(key));
-    } catch(error) {
-        // tslint:disable-next-line:no-console
-        console.log(error);
+    } catch(err) {
+        log.error(err);
     }
 
     return valid;
@@ -63,6 +67,5 @@ app.get('/418/', (req, res) => {
 // Log the port to the console.
 app.listen(
     PORT,
-    // tslint:disable-next-line:no-console
-    () => console.log(`API is live on port: ${PORT}`)
+    () => log.info(`API is live on port: ${PORT}`)
 );
