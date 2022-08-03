@@ -3,7 +3,7 @@ import express from 'express';
 import md5 from 'md5';
 import mysql from 'mysql';
 import util from 'util';
-import teapot from './routes/localtestroutes';
+import teapot from './routes/teapot';
 
 // Named imports
 import { ValidRes } from './validation';
