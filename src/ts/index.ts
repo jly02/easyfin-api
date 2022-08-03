@@ -5,7 +5,8 @@ import mysql from 'mysql';
 import util from 'util';
 import path from 'path';
 
-import { ValidRes } from './types';
+// Type interface imports
+import { ValidRes } from './validation';
 
 // Setting port
 const PORT = process.env.PORT;
