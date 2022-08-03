@@ -3,14 +3,14 @@ import express from 'express';
 import md5 from 'md5';
 import mysql from 'mysql';
 import util from 'util';
-import path from 'path';
+import teapot from './routes/localtestroutes';
 
 // Named imports
 import { ValidRes } from './validation';
 import { Logger } from 'tslog';
 
-// Initializing tslog logger
-const log: Logger = new Logger({ name: "errorLog" });
+// Initializing tslog logger (general log)
+const log: Logger = new Logger({ name: "genLog" });
 
 // Setting port
 const PORT = process.env.PORT;
@@ -33,6 +33,9 @@ con.connect(err => {
 const app = express();
 app.use(express.json());
 
+// Other route files
+app.use(teapot);
+
 // Allow query to be called asynchronously
 const query = util.promisify(con.query).bind(con);
 
@@ -54,29 +57,6 @@ const validate = async (key: string, user_name: string) => {
 
     return valid;
 }
-
-
-/**
- * I'm a teapot.
- */
-app.get('/418/', (req, res) => { 
-    res.status(418).sendFile('src/html/teapot.html', {root: path.dirname(__dirname)});
-});
-
-/**
- * Teapot styling.
- */
- app.get('/assets/teapot.css', (req, res) => {
-    res.status(200).sendFile('src/assets/css/teapot.css', {root: path.dirname(__dirname)});
-});
-
-/**
- * Teapot picture.
- */
- app.get('/assets/teapot.png', (req, res) => {
-    res.status(200).sendFile('src/assets/img/teapot.png', {root: path.dirname(__dirname)});
-});
-
 
 // Log the port to the console.
 app.listen(
