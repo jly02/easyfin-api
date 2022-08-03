@@ -63,6 +63,20 @@ app.get('/418/', (req, res) => {
     res.status(418).sendFile('src/html/teapot.html', {root: path.dirname(__dirname)});
 });
 
+/**
+ * Teapot styling.
+ */
+ app.get('/assets/teapot.css', (req, res) => {
+    res.status(200).sendFile('src/assets/css/teapot.css', {root: path.dirname(__dirname)});
+});
+
+/**
+ * Teapot picture.
+ */
+ app.get('/assets/teapot.png', (req, res) => {
+    res.status(200).sendFile('src/assets/img/teapot.png', {root: path.dirname(__dirname)});
+});
+
 
 // Log the port to the console.
 app.listen(
