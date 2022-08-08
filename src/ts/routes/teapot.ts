@@ -1,6 +1,9 @@
 import express from 'express';
 import path from 'path';
 
+/**
+ * Routes for the error 418 page.
+ */
 const router = express.Router();
 
 /**
