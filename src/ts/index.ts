@@ -42,9 +42,9 @@ app.use(teapot);
 const query = util.promisify(con.query).bind(con);
 
 /**
- * Validate a password.
- * @param {String} key the password to be validated
- * @returns whether the password is valid
+ * Validate an api key.
+ * @param {String} key the api key to be validated
+ * @returns whether the key is valid
  */
 const validate = async (key: string, user_name: string) => {
     // get id for given user

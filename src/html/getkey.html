@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Generate an API Key</title>
+    </head>
+    <body>
+        <p>API Key:</p> 
+        <div>
+            <textarea readonly id="apikey" style="display: none;"></textarea>
+        </div>
+        
+        <button onclick="genkey()">Generate Key</button>
+        <br>
+        <input type="checkbox" onclick="showkey()">Show Key
+        <br>
+        <p id="infoField"></p>
+        <script src="../../dist/scripts/genkey.js"></script>
+    </body>
+</html>
