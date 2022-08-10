@@ -9,5 +9,5 @@ export interface ValidRes {
  * Contains user id linked to a specific username.
  */
 export interface UserId {
-    id: number;
+    user_id: number;
 }

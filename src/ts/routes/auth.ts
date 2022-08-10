@@ -86,6 +86,8 @@ router.post('/update-users/', async (req, res) => {
         res.status(400).send({
             message: "Username is required!"
         }).end();
+
+        return;
     }
 
     con.query(`INSERT INTO users(user_name) VALUES('${username}')`, async (err, result) => {
@@ -104,7 +106,7 @@ router.post('/update-users/', async (req, res) => {
         // Update apikeys table
         let apikey: string = await genkey();
         let id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${username}'`);
-        await query(`INSERT INTO apikeys VALUES(${id[0].id}, '${md5(apikey)}')`);
+        await query(`INSERT INTO apikeys VALUES(${id[0].user_id}, '${md5(apikey)}')`);
 
         // HTTP - 200 OK
         res.status(200).send({
