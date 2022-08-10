@@ -61,6 +61,12 @@ const validate = async (key: string, user_name: string) => {
 router.post('/update-users/', async (req, res) => {
     const { username } = req.body;
 
+    if(!username) {
+        res.status(400).send({
+            message: "Username is required!"
+        }).end();
+    }
+
     con.query(`INSERT INTO users(user_name) VALUES('${username}')`, (err, result) => {
         // HTTP - 500 Internal Server Error
         if(err) {
