@@ -59,7 +59,21 @@ const validate = async (key: string, user_name: string) => {
  * Needs JSON body to contain requested username, and if possible will generate a new API key.
  */
 router.post('/update-users/', async (req, res) => {
+    const { username } = req.body;
 
+    con.query(`INSERT INTO users(user_name) VALUES('${username}')`, (err, result) => {
+        // HTTP - 500 Internal Server Error
+        if(err) {
+            res.status(500).send({ err });
+            return;
+        }
+
+        // HTTP - 200 OK
+        res.status(200).send(
+            result,
+            err
+        );
+    });
 });
 
 /**
