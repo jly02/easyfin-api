@@ -67,16 +67,25 @@ router.post('/update-users/', async (req, res) => {
         }).end();
     }
 
-    con.query(`INSERT INTO users(user_name) VALUES('${username}')`, (err, result) => {
+    con.query(`INSERT INTO users(user_name) VALUES('${username}')`, async (err, result) => {
         // HTTP - 500 Internal Server Error
         if(err) {
+            // 1062 is MySQL duplicate entry error number
+            if(err.errno === 1062) {
+                res.status(409).send({
+                    message: "Username has been taken!"
+                }).end();
+            }
+
             res.status(500).send({ err }).end();
         }
 
         // HTTP - 200 OK
-        res.status(200).send(
-            result
-        );
+        res.status(200).send({
+            result,
+            message: "Username successfully registered!",
+            apikey: 1
+        });
     });
 });
 
