@@ -1,6 +1,5 @@
 // Modules
 import express from 'express';
-import session from 'express-session';
 
 // Named imports
 import { Logger } from 'tslog';
@@ -18,11 +17,6 @@ const PORT = process.env.PORT;
 
 // Adding modules to app
 const app = express();
-app.use(session({
-	secret: 'secret',
-	resave: true,
-	saveUninitialized: true
-}));
 app.use(express.json());
 
 // Other routes
