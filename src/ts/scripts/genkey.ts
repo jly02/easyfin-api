@@ -12,19 +12,11 @@ const showkey = () => {
 }
 
 /**
- * Generate an API Key, but do not show it yet.
+ * Request API to register the given username and generate a new API key
  */
 const genkey = async () => {
     let infoField: HTMLElement = document.getElementById("infoField");
     let keyfield: HTMLElement = document.getElementById("apikey");
-
-    let result = '';
-    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let charactersLength = characters.length;
-
-    for(let i = 0; i < 16; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
 
     /* [not in use for now]
     const response: Response = await fetch('https://easyfin-api.herokuapp.com/update-users', {
@@ -34,6 +26,6 @@ const genkey = async () => {
     });
     */
 
-    keyfield.textContent = result;
+    keyfield.textContent = 'thing';
     infoField.textContent = "Generated API Key! Press 'Show Key' and store your key somewhere, you will not be able to recover it if you lose it!";
 }

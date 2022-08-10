@@ -35,7 +35,7 @@ const query = util.promisify(con.query).bind(con);
 
 /**
  * Validate an api key.
- * @param {String} key the api key to be validated
+ * @param {string} key the api key to be validated
  * @returns whether the key is valid
  */
 const validate = async (key: string, user_name: string) => {
@@ -56,10 +56,31 @@ const validate = async (key: string, user_name: string) => {
 }
 
 /**
+ * Generates a random 16-byte API key.
+ */
+const genkey = async (): Promise<string> => {
+    let result = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let charactersLength = characters.length;
+
+    // Need to re-generate a key if its already been generated before.
+    let dup: ValidRes[];
+    do {
+        for(let i = 0; i < 16; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+
+        dup = await query(`SELECT keyhash FROM apikeys WHERE keyhash = '${md5(result)}'`);
+    } while(dup[0]);
+
+    return result;
+}
+
+/**
  * Needs JSON body to contain requested username, and if possible will generate a new API key.
  */
 router.post('/update-users/', async (req, res) => {
-    const { username } = req.body;
+    const { username }: { username: String } = req.body;
 
     if(!username) {
         res.status(400).send({
@@ -68,7 +89,6 @@ router.post('/update-users/', async (req, res) => {
     }
 
     con.query(`INSERT INTO users(user_name) VALUES('${username}')`, async (err, result) => {
-        // HTTP - 500 Internal Server Error
         if(err) {
             // 1062 is MySQL duplicate entry error number
             if(err.errno === 1062) {
@@ -77,14 +97,20 @@ router.post('/update-users/', async (req, res) => {
                 }).end();
             }
 
+            // HTTP - 500 Internal Server Error (other unknown errors)
             res.status(500).send({ err }).end();
         }
+
+        // Update apikeys table
+        let apikey: string = await genkey();
+        let id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${username}'`);
+        await query(`INSERT INTO apikeys VALUES(${id[0].id}, '${md5(apikey)}')`);
 
         // HTTP - 200 OK
         res.status(200).send({
             result,
             message: "Username successfully registered!",
-            apikey: 1
+            apikey
         });
     });
 });
@@ -92,7 +118,7 @@ router.post('/update-users/', async (req, res) => {
 /**
  * Handles incoming requests for API validation
  */
-router.get('validate', async (req, res) => {
+router.get('login', async (req, res) => {
     
 })
 
