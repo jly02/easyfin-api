@@ -64,8 +64,7 @@ router.post('/update-users/', async (req, res) => {
     con.query(`INSERT INTO users(user_name) VALUES('${username}')`, (err, result) => {
         // HTTP - 500 Internal Server Error
         if(err) {
-            res.status(500).send({ err });
-            return;
+            res.status(500).send({ err }).end();
         }
 
         // HTTP - 200 OK
