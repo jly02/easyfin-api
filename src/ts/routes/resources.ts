@@ -13,7 +13,7 @@ router.get('/getkey/', (req, res) => {
 /**
  * Route for getting genkey JavaScript file
  */
-router.get('/scripts/genkey.ts', (req, res) => {
+router.get('/scripts/genkey.ts/', (req, res) => {
     res.status(200).sendFile('scripts/genkey.js', {root: path.dirname(__dirname)});
 });
 
