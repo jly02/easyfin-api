@@ -3,6 +3,7 @@ import express from 'express';
 import md5 from 'md5';
 import mysql from 'mysql';
 import util from 'util';
+import session from 'express-session';
 
 // Named imports
 import { ValidRes, UserId } from './querytypes';
@@ -10,6 +11,7 @@ import { Logger } from 'tslog';
 
 // URI route imports
 import teapot from './routes/teapot';
+import resources from './routes/resources';
 
 // Initializing tslog logger (general log)
 const log: Logger = new Logger({ name: "genLog" });
@@ -31,12 +33,18 @@ con.connect(err => {
     if(err) throw err;
 });
 
-// Use express and auto-parse JSON
+// Adding modules to app
 const app = express();
+app.use(session({
+	secret: 'secret',
+	resave: true,
+	saveUninitialized: true
+}));
 app.use(express.json());
 
-// Other route files
+// Other routes
 app.use(teapot);
+app.use(resources);
 
 // Allow query to be called asynchronously
 const query = util.promisify(con.query).bind(con);
