@@ -70,8 +70,7 @@ router.post('/update-users/', async (req, res) => {
 
         // HTTP - 200 OK
         res.status(200).send(
-            result,
-            err
+            result
         );
     });
 });
