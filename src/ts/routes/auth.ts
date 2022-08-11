@@ -80,7 +80,7 @@ const genkey = async (): Promise<string> => {
  * Needs JSON body to contain requested username, and if possible will generate a new API key.
  */
 router.post('/update-users/', async (req, res) => {
-    const { username }: { username: String } = req.body;
+    const { username }: { username: string } = req.body;
 
     if(!username) {
         res.status(400).send({
@@ -120,8 +120,28 @@ router.post('/update-users/', async (req, res) => {
 /**
  * Handles incoming requests for API validation
  */
-router.get('login', async (req, res) => {
-    
+router.get('/login/', async (req, res) => {
+    const { username }: { username: string } = req.body;
+
+    // Look for 'Authorization' header, which holds a user's unique API key.
+    let password: string;
+    try {
+        password = req.header('Authorization');
+    } catch(error) {
+        // HTTP - 401 Unauthorized
+        res.status(401).send({
+            error,
+            success: false,
+            msg: 'missing header token'
+        }).end();
+
+        return;
+    }
+
+    let id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${username}'`);
+    res.status(200).send({
+        id
+    });
 })
 
 export default router;
