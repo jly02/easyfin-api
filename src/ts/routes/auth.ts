@@ -120,7 +120,7 @@ router.post('/update-users/', async (req, res) => {
 /**
  * Handles incoming requests for API validation
  */
-router.get('/login/', async (req, res) => {
+router.post('/login/', async (req, res) => {
     const { username }: { username: string } = req.body;
 
     // Look for 'Authorization' header, which holds a user's unique API key.
