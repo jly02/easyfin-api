@@ -35,10 +35,11 @@ const query = util.promisify(con.query).bind(con);
 
 /**
  * Validate an api key.
+ * @param {number} id the user's unique ID
  * @param {string} key the api key to be validated
  * @returns whether the key is valid
  */
-const validate = async (key: string, id: number): Promise<boolean> => {
+const validate = async (id: number, key: string): Promise<boolean> => {
     let valid: boolean;
     try {
         // wait for response from the database
@@ -128,7 +129,7 @@ router.post('/test-login/', async (req, res) => {
         // HTTP - 401 Unauthorized
         res.status(401).send({
             error,
-            success: false,
+            valid: false,
             message: "missing header token"
         }).end();
 
@@ -139,6 +140,7 @@ router.post('/test-login/', async (req, res) => {
     let id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${username}'`);
     if(!id[0]) {
         res.status(404).send({
+            valid: false,
             message: "User not found!"
         }).end();
 
@@ -146,7 +148,7 @@ router.post('/test-login/', async (req, res) => {
     }
 
     // Validate API key
-    let valid: boolean = await validate(key, id[0].user_id);
+    let valid: boolean = await validate(id[0].user_id, key);
     let statCode: number = valid ? 200 : 401;
     res.status(statCode).send({
         valid
