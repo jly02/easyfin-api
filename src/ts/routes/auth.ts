@@ -47,6 +47,7 @@ const validate = async (id: number, key: string): Promise<boolean> => {
         const status: ValidRes[] = await query(`SELECT keyhash FROM apikeys WHERE user_id = ${id}`);
         // check hashes
         valid = (status[0].hash === md5(key));
+        log.info(status);
         log.info(status[0].hash);
         log.info(md5(key));
     } catch(err) {
