@@ -140,7 +140,7 @@ router.post('/login/', async (req, res) => {
 
     let id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${username}'`);
     res.status(200).send({
-        id
+        exists: id[0] ? true : false
     });
 })
 
