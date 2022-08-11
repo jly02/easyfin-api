@@ -38,11 +38,8 @@ const query = util.promisify(con.query).bind(con);
  * @param {string} key the api key to be validated
  * @returns whether the key is valid
  */
-const validate = async (key: string, user_name: string) => {
-    // get id for given user
-    const id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${user_name}'`);
-
-    let valid: boolean = false;
+const validate = async (key: string, id: number): Promise<boolean> => {
+    let valid: boolean;
     try {
         // wait for response from the database
         const status: ValidRes[] = await query(`SELECT keyhash FROM apikeys WHERE user_id = ${id}`);
@@ -120,27 +117,39 @@ router.post('/update-users/', async (req, res) => {
 /**
  * Handles incoming requests for API validation
  */
-router.post('/login/', async (req, res) => {
+router.post('/test-login/', async (req, res) => {
     const { username }: { username: string } = req.body;
 
     // Look for 'Authorization' header, which holds a user's unique API key.
-    let password: string;
+    let key: string;
     try {
-        password = req.header('Authorization');
+        key = req.header('Authorization');
     } catch(error) {
         // HTTP - 401 Unauthorized
         res.status(401).send({
             error,
             success: false,
-            msg: 'missing header token'
+            message: "missing header token"
         }).end();
 
         return;
     }
 
+    // Look for user in database
     let id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${username}'`);
-    res.status(200).send({
-        exists: id[0] ? true : false
+    if(!id[0]) {
+        res.status(404).send({
+            message: "User not found!"
+        }).end();
+
+        return;
+    }
+
+    // Validate API key
+    let valid: boolean = await validate(key, id[0].user_id);
+    let statCode: number = valid ? 200 : 401;
+    res.status(statCode).send({
+        valid
     });
 })
 
