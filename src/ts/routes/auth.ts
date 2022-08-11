@@ -35,9 +35,10 @@ const query = util.promisify(con.query).bind(con);
 
 /**
  * Validate an api key.
+ * 
  * @param {number} id the user's unique ID
  * @param {string} key the api key to be validated
- * @returns whether the key is valid
+ * @returns whether the key is valid for the given user
  */
 const validate = async (id: number, key: string): Promise<boolean> => {
     let valid: boolean;
@@ -46,6 +47,7 @@ const validate = async (id: number, key: string): Promise<boolean> => {
         const status: ValidRes[] = await query(`SELECT keyhash FROM apikeys WHERE user_id = ${id}`);
         // check hashes
         valid = (status[0].hash === md5(key));
+        log.info(status[0].hash === md5(key));
     } catch(err) {
         log.error(err);
     }
