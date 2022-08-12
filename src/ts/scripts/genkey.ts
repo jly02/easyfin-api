@@ -19,19 +19,16 @@ const genkey = async () => {
     let keyField: HTMLElement = document.getElementById("apikey");
     let usernameField: HTMLElement = document.getElementById("username");
 
-    /* tslint:disable-next-line */
-    console.log(usernameField.textContent);
-
     const response: Response = await fetch('https://easyfin-api.herokuapp.com/update-users', {
         method: 'POST',
         body: JSON.stringify({ username: usernameField.textContent }),
         headers: {'Content-Type': 'application/json'} 
     });
     
-    const decoded = await response.json() as IRegisterResponse[];
+    const decoded = await response.json() as IRegisterResponse;
 
-    keyField.textContent = decoded[0].apikey;
-    infoField.textContent = decoded[0].message;
+    keyField.textContent = decoded.apikey;
+    infoField.textContent = decoded.message;
 }
 
 /**
