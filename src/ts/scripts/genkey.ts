@@ -21,7 +21,7 @@ const genkey = async () => {
 
     const response: Response = await fetch('https://easyfin-api.herokuapp.com/update-users', {
         method: 'POST',
-        body: usernameField.textContent,
+        body: JSON.stringify({username: usernameField.textContent}),
         headers: {'Content-Type': 'application/json'} 
     });
     
