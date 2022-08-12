@@ -16,16 +16,25 @@ const showkey = () => {
  */
 const genkey = async () => {
     let infoField: HTMLElement = document.getElementById("infoField");
-    let keyfield: HTMLElement = document.getElementById("apikey");
+    let keyField: HTMLElement = document.getElementById("apikey");
+    let usernameField: HTMLElement = document.getElementById("username");
 
-    /* [not in use for now]
     const response: Response = await fetch('https://easyfin-api.herokuapp.com/update-users', {
         method: 'POST',
-        body: result,
+        body: usernameField.textContent,
         headers: {'Content-Type': 'application/json'} 
     });
-    */
+    
+    const decoded = await response.json() as IRegisterResponse[];
 
-    keyfield.textContent = 'thing';
-    infoField.textContent = "Generated API Key! Press 'Show Key' and store your key somewhere, you will not be able to recover it if you lose it!";
+    keyField.textContent = decoded[0].apikey;
+    infoField.textContent = decoded[0].message;
+}
+
+/**
+ * Only for use within this for decoding JSON data.
+ */
+interface IRegisterResponse {
+    message: string;
+    apikey: string;
 }
