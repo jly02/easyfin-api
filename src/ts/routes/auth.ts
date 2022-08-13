@@ -83,9 +83,7 @@ const genkey = async (): Promise<string> => {
  */
 router.post('/update-users/', async (req, res) => {
     const { username }: { username: string } = req.body;
-
-    log.info(username);
-
+    
     if(!username) {
         res.status(400).send({
             message: "Username is required!"

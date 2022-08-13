@@ -17,11 +17,11 @@ const showkey = () => {
 const genkey = async () => {
     let infoField: HTMLElement = document.getElementById("infoField");
     let keyField: HTMLElement = document.getElementById("apikey");
-    let usernameField: HTMLElement = document.getElementById("username");
+    let usernameField: HTMLInputElement = <HTMLInputElement>document.getElementById("username");
 
     const response: Response = await fetch('https://easyfin-api.herokuapp.com/update-users', {
         method: 'POST',
-        body: JSON.stringify({ username: usernameField.textContent }),
+        body: JSON.stringify({ username: usernameField.value }),
         headers: {'Content-Type': 'application/json'} 
     });
     
