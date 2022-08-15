@@ -4,10 +4,10 @@ import express from 'express';
 // Named imports
 import { UserId } from './lib/types';
 import { validate } from './lib/validation';
-import { con, query } from './lib/queries';
+import { query } from './lib/queries';
 
 /**
- * Handles authorization-related routes.
+ * Handles user info routes, like getting/adding stock data.
  */
 const router = express.Router();
 
