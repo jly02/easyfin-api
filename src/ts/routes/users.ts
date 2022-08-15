@@ -52,8 +52,12 @@ router.get('/get-stocks/', async (req, res) => {
         res.status(200).send({
             response,
             message: "Successfully acquired data!"
-        })
+        });
     }
+});
+
+router.post('/add-stock/', (req, res) => {
+
 });
 
 export default router;
