@@ -1,61 +1,16 @@
 // Module imports
 import express from 'express';
 import md5 from 'md5';
-import mysql from 'mysql';
-import util from 'util';
 
 // Named imports
 import { ValidRes, UserId } from './lib/types';
-import { Logger } from 'tslog';
-
-// Authorization-related logs
-const log: Logger = new Logger({ name: "authLog" });
+import { validate } from './lib/validation';
+import { con, query } from './lib/queries';
 
 /**
- * Handles authorization-related routes.
+ * Handles authorization and account creation routes.
  */
 const router = express.Router();
-
-// Start SQL connection
-const con = mysql.createConnection({
-    host: process.env.DB_URL,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_USER
-});
-
-// ONLY CONNECT ONCE HERE, DO NOT DO AGAIN IN ANY FUNCTION
-con.connect(err => {
-    // If connection doesn't work, don't keep trying to run server
-    if(err) throw err;
-});
-
-// Allow query to be called asynchronously
-const query = util.promisify(con.query).bind(con);
-
-/**
- * Validate an api key.
- * 
- * @param {number} id the user's unique ID
- * @param {string} key the api key to be validated
- * @returns whether the key is valid for the given user
- */
-const validate = async (id: number, key: string): Promise<boolean> => {
-    let valid: boolean;
-    try {
-        // wait for response from the database
-        const status: ValidRes[] = await query(`SELECT keyhash FROM apikeys WHERE user_id = ${id}`);
-        // check hashes
-        valid = (status[0].keyhash === md5(key));
-        log.info(status);
-        log.info(status[0].keyhash);
-        log.info(md5(key));
-    } catch(err) {
-        log.error(err);
-    }
-
-    return valid;
-}
 
 /**
  * Generates a random 16-byte API key.
