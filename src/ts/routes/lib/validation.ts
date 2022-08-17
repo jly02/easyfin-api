@@ -3,10 +3,20 @@ import md5 from 'md5';
 
 // Named imports
 import { query } from './queries';
-import { ValidRes } from './types';
+import { ValidRes, UserId } from './types';
 import { Logger } from 'tslog';
 
 const log: Logger = new Logger({ name: "authLog" });
+
+export const getId = async (username: string): Promise<number> => {
+    // Look for user in database
+    let id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${username}'`);
+    if(!id[0]) {
+        return;
+    }
+
+    return id[0].user_id;
+}
 
 /**
  * Validate an api key.

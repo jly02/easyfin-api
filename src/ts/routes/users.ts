@@ -2,8 +2,7 @@
 import express from 'express';
 
 // Named imports
-import { UserId } from './lib/types';
-import { validate } from './lib/validation';
+import { validate, getId } from './lib/validation';
 import { query } from './lib/queries';
 
 /**
@@ -34,8 +33,8 @@ router.get('/get-stocks/', async (req, res) => {
     }
 
     // Look for user in database
-    let id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${username}'`);
-    if(!id[0]) {
+    let id: number = await getId(username);
+    if(!id) {
         res.status(404).send({
             valid: false,
             message: "User not found!"
@@ -45,13 +44,13 @@ router.get('/get-stocks/', async (req, res) => {
     }
 
     // Validate API key
-    let valid: boolean = await validate(id[0].user_id, key);
+    let valid: boolean = await validate(id, key);
     if(!valid) {
         res.status(401).send({
             message: "Could not validate key!"
         }).end();
     } else {
-        let response = await query(`SELECT symbol, amount FROM stocks WHERE user_id = ${id[0].user_id}`);
+        let response = await query(`SELECT symbol, amount FROM stocks WHERE user_id = ${id}`);
 
         res.status(200).send({
             response,
@@ -82,8 +81,8 @@ router.post('/add-stock/', async (req, res) => {
     }
 
     // Look for user in database
-    let id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${username}'`);
-    if(!id[0]) {
+    let id: number = await getId(username);
+    if(!id) {
         res.status(404).send({
             valid: false,
             message: "User not found!"
@@ -93,7 +92,7 @@ router.post('/add-stock/', async (req, res) => {
     }
 
     // Validate API key
-    let valid: boolean = await validate(id[0].user_id, key);
+    let valid: boolean = await validate(id, key);
     if(!valid) {
         res.status(401).send({
             message: "Could not validate key!"
@@ -130,8 +129,8 @@ router.delete('/remove-stock/', async (req, res) => {
     }
 
     // Look for user in database
-    let id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${username}'`);
-    if(!id[0]) {
+    let id: number = await getId(username);
+    if(!id) {
         res.status(404).send({
             valid: false,
             message: "User not found!"
@@ -141,7 +140,7 @@ router.delete('/remove-stock/', async (req, res) => {
     }
 
     // Validate API key
-    let valid: boolean = await validate(id[0].user_id, key);
+    let valid: boolean = await validate(id, key);
     if(!valid) {
         res.status(401).send({
             message: "Could not validate key!"

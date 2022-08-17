@@ -3,8 +3,8 @@ import express from 'express';
 import md5 from 'md5';
 
 // Named imports
-import { ValidRes, UserId } from './lib/types';
-import { validate } from './lib/validation';
+import { ValidRes } from './lib/types';
+import { validate, getId } from './lib/validation';
 import { con, query } from './lib/queries';
 
 /**
@@ -62,8 +62,8 @@ router.post('/update-users/', async (req, res) => {
 
         // Update apikeys table
         let apikey: string = await genkey();
-        let id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${username}'`);
-        await query(`INSERT INTO apikeys VALUES(${id[0].user_id}, '${md5(apikey)}')`);
+        let id: number = await getId(username);
+        await query(`INSERT INTO apikeys VALUES(${id}, '${md5(apikey)}')`);
 
         // HTTP - 200 OK
         res.status(200).send({
@@ -96,8 +96,8 @@ router.post('/test-login/', async (req, res) => {
     }
 
     // Look for user in database
-    let id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${username}'`);
-    if(!id[0]) {
+    let id: number = await getId(username);
+    if(!id) {
         res.status(404).send({
             valid: false,
             message: "User not found!"
@@ -107,7 +107,7 @@ router.post('/test-login/', async (req, res) => {
     }
 
     // Validate API key
-    let valid: boolean = await validate(id[0].user_id, key);
+    let valid: boolean = await validate(id, key);
     let statCode: number = valid ? 200 : 401;
     res.status(statCode).send({
         valid
