@@ -7,7 +7,10 @@ import path from 'path';
 const router = express.Router();
 
 /**
- * I'm a teapot.
+ * I'm a teapot. 
+ * 
+ * C(_)~ 
+ *      u
  */
 router.get('/418/', (req, res) => { 
     res.status(418).sendFile('src/pages/teapot.html', {root: path.dirname(path.dirname(__dirname))});
