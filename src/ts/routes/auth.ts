@@ -81,19 +81,7 @@ router.post('/test-login/', async (req, res) => {
     const { username }: { username: string } = req.body;
 
     // Look for 'Authorization' header, which holds a user's unique API key.
-    let key: string;
-    try {
-        key = req.header('Authorization');
-    } catch(error) {
-        // HTTP - 401 Unauthorized
-        res.status(401).send({
-            error,
-            valid: false,
-            message: "missing header token"
-        }).end();
-
-        return;
-    }
+    let key: string = req.header('Authorization');
 
     // Look for user in database
     let id: number = await getId(username);
