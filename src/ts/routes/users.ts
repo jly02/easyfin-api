@@ -14,8 +14,8 @@ const router = express.Router();
  * Results in a JSON string containing all of the stocks a particular user has,
  * and their quantities.
  */
-router.get('/get-stocks/', async (req, res) => {
-    const { username }: { username: string } = req.body;
+router.get('/get-stocks/:username', async (req, res) => {
+    const { username }: { username: string } = req.params;
 
     // Look for 'Authorization' header, which holds a user's unique API key.
     let key: string = req.header('Authorization');
