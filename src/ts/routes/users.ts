@@ -66,19 +66,7 @@ router.post('/add-stock/', async (req, res) => {
     const { username, symbol, amount }: { username: string, symbol: string, amount: number } = req.body;
 
     // Look for 'Authorization' header, which holds a user's unique API key.
-    let key: string;
-    try {
-        key = req.header('Authorization');
-    } catch(error) {
-        // HTTP - 401 Unauthorized
-        res.status(401).send({
-            error,
-            valid: false,
-            message: "missing header token"
-        }).end();
-
-        return;
-    }
+    let key: string = req.header('Authorization');
 
     // Look for user in database
     let id: number = await getId(username);
