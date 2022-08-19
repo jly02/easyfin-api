@@ -8,6 +8,12 @@ import { Logger } from 'tslog';
 
 const log: Logger = new Logger({ name: "authLog" });
 
+/**
+ * Gets the user ID attached to a given username.
+ * 
+ * @param {string} username the username to find the related id for
+ * @returns the user id
+ */
 export const getId = async (username: string): Promise<number> => {
     // Look for user in database
     let id: UserId[] = await query(`SELECT user_id FROM users WHERE user_name = '${username}'`);
