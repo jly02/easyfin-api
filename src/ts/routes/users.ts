@@ -50,8 +50,9 @@ router.get('/get-stocks/:username', async (req, res) => {
 /**
  * Handles adding a stock to a user's account.
  */
-router.post('/add-stock/', async (req, res) => {
-    const { username, symbol, amount }: { username: string, symbol: string, amount: number } = req.body;
+router.post('/add-stock/:username', async (req, res) => {
+    const { symbol, amount }: { symbol: string, amount: number } = req.body;
+    const { username }: { username: string } = req.params;
 
     // Look for 'Authorization' header, which holds a user's unique API key.
     let key: string = req.header('Authorization');
@@ -86,8 +87,9 @@ router.post('/add-stock/', async (req, res) => {
 /**
  * Removes a stock from a user's account.
  */
-router.delete('/remove-stock/', async (req, res) => {
-    const { username, symbol }: { username: string, symbol: string } = req.body;
+router.delete('/remove-stock/:username', async (req, res) => {
+    const { symbol }: { symbol: string } = req.body;
+    const { username }: { username: string } = req.params;
 
     // Look for 'Authorization' header, which holds a user's unique API key.
     let key: string = req.header('Authorization');
