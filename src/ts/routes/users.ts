@@ -88,11 +88,12 @@ router.post('/add-stock/:username', async (req, res) => {
  * Removes a stock from a user's account.
  */
 router.delete('/remove-stock/:username', async (req, res) => {
-    const { symbol }: { symbol: string } = req.body;
     const { username }: { username: string } = req.params;
 
-    // Look for 'Authorization' header, which holds a user's unique API key.
+    // Look for 'Authorization' and 'Symbol' header, which holds a user's unique API key, and
+    // the name of the stock they want to remove.
     let key: string = req.header('Authorization');
+    let symbol: string = req.header('Symbol');
 
     // Look for user in database
     let id: number = await getId(username);
